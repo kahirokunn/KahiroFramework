@@ -1,17 +1,12 @@
 <?php
-require_once('./library/illuminate/Validate.php');
-use library\illuminate\Validate as Validate;
-
 if (empty($_SERVER['PATH_INFO'])) {
     exit;
 }
 
 //スラッシュで区切られたurlを取得します
-$analysis = explode('/', $_SERVER['PATH_INFO']);
-
+$parse = explode('/', $_SERVER['PATH_INFO']);
 $call = "";
-
-foreach ($analysis as $value) {
+foreach ($parse as $value) {
     if ($value !== "") {
         $call = $value;
         break;
@@ -26,8 +21,7 @@ if (file_exists('./controllers/'.$call.'.php')) {
     $obj = new $className();
     //controllerのindexメソッドを呼びます
     $response = json_encode($obj->index());
-    //json形式なら出力します
-    if (Validate::isJson($response)) {
-        echo $response;
-    }
+    //ヘッダーを指定してJSONを出力
+    header("Content-Type: application/json; charset=utf-8");
+    echo $response;
 }
